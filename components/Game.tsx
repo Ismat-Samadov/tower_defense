@@ -36,6 +36,7 @@ export default function Game() {
     selectedTowerType: null,
     gameStatus: GameStatus.PLAYING,
     score: 0,
+    gameSpeed: 1,
   });
 
   const waveInProgressRef = useRef(false);
@@ -53,7 +54,7 @@ export default function Game() {
 
     const gameLoop = () => {
       const currentTime = Date.now();
-      const deltaTime = (currentTime - lastTime) / 1000;
+      const deltaTime = ((currentTime - lastTime) / 1000) * gameState.gameSpeed;
       lastTime = currentTime;
 
       setGameState((prevState) => {
@@ -82,8 +83,9 @@ export default function Game() {
         // Tower targeting and shooting
         newState.towers = newState.towers.map((tower) => {
           const target = findTargetEnemy(tower, newState.enemies);
+          const adjustedFireRate = tower.fireRate / newState.gameSpeed;
 
-          if (target && currentTime - tower.lastFireTime >= tower.fireRate) {
+          if (target && currentTime - tower.lastFireTime >= adjustedFireRate) {
             // Create projectile
             const projectileId = `proj-${projectileIdCounterRef.current++}`;
             newState.projectiles.push({
@@ -177,7 +179,7 @@ export default function Game() {
     return () => {
       if (animationId) cancelAnimationFrame(animationId);
     };
-  }, [gameState.gameStatus]);
+  }, [gameState.gameStatus, gameState.gameSpeed]);
 
   const startNextWave = useCallback(() => {
     const wave = generateWave(gameState.wave);
@@ -324,7 +326,15 @@ export default function Game() {
       selectedTowerType: null,
       gameStatus: GameStatus.PLAYING,
       score: 0,
+      gameSpeed: 1,
     });
+  }, []);
+
+  const handleSpeedChange = useCallback((speed: number) => {
+    setGameState((prev) => ({
+      ...prev,
+      gameSpeed: speed,
+    }));
   }, []);
 
   return (
@@ -345,6 +355,7 @@ export default function Game() {
             onTowerSelect={handleTowerSelect}
             onPause={handlePause}
             onRestart={handleRestart}
+            onSpeedChange={handleSpeedChange}
           />
           <div className="flex justify-center mt-3 md:mt-4">
             <GameCanvas

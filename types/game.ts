@@ -69,6 +69,7 @@ export interface GameState {
   selectedTowerType: TowerType | null;
   gameStatus: GameStatus;
   score: number;
+  gameSpeed: number;
 }
 
 export enum GameStatus {

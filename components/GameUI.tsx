@@ -6,6 +6,7 @@ interface GameUIProps {
   onTowerSelect: (towerType: TowerType | null) => void;
   onPause: () => void;
   onRestart: () => void;
+  onSpeedChange: (speed: number) => void;
 }
 
 export default function GameUI({
@@ -13,6 +14,7 @@ export default function GameUI({
   onTowerSelect,
   onPause,
   onRestart,
+  onSpeedChange,
 }: GameUIProps) {
   return (
     <div className="w-full">
@@ -63,6 +65,31 @@ export default function GameUI({
             >
               🔄 Restart
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Game Speed Controls */}
+      <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-xl p-3 md:p-4 mb-3 md:mb-4 shadow-lg border border-slate-600">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-orange-400 text-xl">⚡</span>
+            <h3 className="text-white font-bold text-sm md:text-base">Game Speed</h3>
+          </div>
+          <div className="flex gap-2 w-full sm:w-auto">
+            {[1, 2, 3].map((speed) => (
+              <button
+                key={speed}
+                onClick={() => onSpeedChange(speed)}
+                className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-semibold transition-all shadow-md transform hover:scale-105 ${
+                  gameState.gameSpeed === speed
+                    ? "bg-gradient-to-r from-orange-600 to-orange-700 text-white ring-2 ring-orange-400"
+                    : "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600 text-gray-300"
+                }`}
+              >
+                {speed}x
+              </button>
+            ))}
           </div>
         </div>
       </div>
